@@ -1,4 +1,5 @@
 import codeImg from '../assets/images/icons8-código-32.png'
+import { NavLink } from './nav-link'
 
 export function Header() {
     return (
@@ -6,8 +7,8 @@ export function Header() {
             <img src={codeImg}/>
 
             <nav className='flex items-center gap-5'>
-                <a href="" className='font-medium text-sm text-zinc-300'>Eventos</a>
-                <a href="" className='font-medium text-sm'>Participantes</a>
+                <NavLink changeFontColor={true} href="/events">Eventos</NavLink>
+                <NavLink href="/attendees">Participantes</NavLink>
             </nav>
         </div>
     )
