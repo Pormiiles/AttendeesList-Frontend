@@ -1,10 +1,37 @@
 import { IconButton } from "../icon-button"
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { Table } from "./table/table"
 import { TableCell } from "./table/table-cell"
 import { TableHeader } from "./table/table-header"
 import { TableRow } from "./table/table-row"
+import { attendees } from "../data/attendees"
+import { useState } from "react"
+
+dayjs.extend(relativeTime)
+dayjs.locale('pt-br')
 
 export function AttendeeList() {
+    const [page, setPage] = useState(1)
+    const totalPages = Math.ceil(attendees.length / 10)
+
+    function goToNextPage() {
+        setPage(page + 1)
+    }
+
+    function goToPreviousPage() {
+        setPage(page - 1)
+    }
+    
+    function goToFirstPage() {
+        setPage(1)
+    }
+
+    function goToLastPage() {
+        setPage(totalPages)
+    }
+
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
@@ -29,21 +56,21 @@ export function AttendeeList() {
                     </TableRow>
                 </thead>
                 <tbody>
-                    {Array.from({ length: 8 }).map((_, i) => {
+                    {attendees.slice((page - 1) * 10, page * 10).map((attendee) => {
                         return (
-                            <TableRow key={i} hover={true}>
+                            <TableRow key={attendee.id} hover={true}>
                                 <TableCell>
                                     <input type="checkbox" name="" id="" />
                                 </TableCell>
-                                <TableCell>12356</TableCell>
+                                <TableCell>{attendee.id}</TableCell>
                                 <TableCell>
                                     <div className="flex flex-col gap-1">
-                                        <span className="font-semibold text-white">Fulano de Tal</span>
-                                        <span>fulano123@gmail.com</span>
+                                        <span className="font-semibold text-white">{attendee.name}</span>
+                                        <span>{attendee.email}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell>7 dias atrás</TableCell>
-                                <TableCell>3 dias trás</TableCell>
+                                <TableCell>{dayjs().to(attendee.createdAt)}</TableCell>
+                                <TableCell>{dayjs().to(attendee.checkedInAt)}</TableCell>
                                 <TableCell>
                                     <IconButton>
                                         <span className="material-symbols-outlined">more_horiz</span>
@@ -55,22 +82,22 @@ export function AttendeeList() {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <TableCell colSpan={3}>Mostrando 10 de 228 itens</TableCell>
+                        <TableCell colSpan={3}>Mostrando {page * 10} de {attendees.length}</TableCell>
                         <TableCell textAlign={true} colSpan={3}>
                             <div className="inline-flex items-center gap-8">
-                                <span>Página 1 de 23</span>
+                                <span>Página {page} de {totalPages}</span>
 
                                 <div className="flex gap-1.5">
-                                    <IconButton>
+                                    <IconButton onClick={goToFirstPage} disabled={page === 1}>
                                         <span className="material-symbols-outlined">keyboard_double_arrow_left</span>
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={goToPreviousPage} disabled={page === 1}>
                                         <span className="material-symbols-outlined">chevron_left</span>
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={goToNextPage} disabled={page === totalPages}>
                                         <span className="material-symbols-outlined">chevron_right</span>
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={goToLastPage} disabled={page === totalPages}>
                                         <span className="material-symbols-outlined">keyboard_double_arrow_right</span>
                                     </IconButton>
                                 </div>
